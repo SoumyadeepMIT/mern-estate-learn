@@ -122,7 +122,7 @@ export default function () {
   const handleShowListings = async () => {
     try {
       setShowListingsError(false);
-      const res = await fetch(`api/user/listings/${currentUser._id}`);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
@@ -131,6 +131,21 @@ export default function () {
       setListings(data);
     } catch (error) {
       setShowListingsError(true);
+    }
+  };
+
+  const handleDeleteListing = async(id) =>{
+    try {
+      const res = await fetch(`/api/listing/delete/${id}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if(data.success === false){
+        return;
+      }
+      setListings((prev) => prev.filter((listing) => listing._id !== id));
+    } catch (error) {
+      console.log(error.message);
     }
   };
   return (
@@ -235,7 +250,7 @@ export default function () {
               </Link>
               <Link className="text-slate-700 font-semibold hover:underline truncate flex-1" to={`/listing/${listing._id}`}><p>{listing.name}</p></Link>
               <div className="flex flex-col items-center">
-                <button className="text-red-700 uppercase">Delete</button>
+                <button className="text-red-700 uppercase" onClick={()=>handleDeleteListing(listing._id)}>Delete</button>
                 <button className="text-green-700 uppercase">Edit</button>
               </div>
             </div>
